@@ -22,7 +22,11 @@ class Directory:
 
     @property
     def size(self):
-        return sum([f.size for f in self.files]) + sum([d.size for d in self.directories.values()])
+        return self.files_size + sum([d.size for d in self.directories.values()])
+
+    @property
+    def files_size(self):
+        return sum([f.size for f in self.files])
 
     def __str__(self):
         return f"<Directory {self.name}>"
@@ -46,7 +50,7 @@ def sum_sizes(d):
             child_size = _sum_child(child)
             child_sizes += child_size
 
-        this_size = child_sizes + c.size
+        this_size = child_sizes + c.files_size
         if this_size <= 100000:
             d.size_total += this_size
         return this_size
@@ -54,35 +58,28 @@ def sum_sizes(d):
     return d.size_total
 
 
-s = 0
-directories = {}
-root = current_dir = Directory("/")
-for line in inputs.split("\n"):
-    if line.startswith(PROMPT):
-        cmd = line.strip(PROMPT)
-        if cmd.startswith("cd"):
-            cmd, arg = cmd.split()
-            if arg == "..":
-                current_dir = current_dir.parent
-            elif arg == "/":
-                current_dir = root
-            else:
-                current_dir = current_dir.directories[arg]
-        elif cmd == "ls":
-            continue
-    elif line.startswith("dir"):
-        _, dirname = line.split()
-        d = Directory(dirname, parent=current_dir)
-        current_dir.add_dir(d)
-        if dirname not in directories:
-            directories[dirname] = d
-    elif line == "break":
-        breakpoint()
-    else:
-        size, filename = line.split()
-        current_dir.add_file(File(filename, int(size)))
-        s += int(size)
+def parse_cmd_lines(lines):
+    root =  Directory("/")
+    directories = {}
+    for line in lines:
+        match line.split():
+            case "$", "cd", "/":
+                current = root
+            case "$", "cd", "..":
+                current = current.parent
+            case "$", "cd", directory:
+                current = current.directories[directory]
+            case "$", "ls":
+                continue
+            case "dir", directory:
+                directories[directory] = Directory(directory, parent=current)
+                current.add_dir(directories[directory])
+            case size, filename:
+                current.add_file(File(filename, int(size)))
+    return root, directories
 
+
+root, directories = parse_cmd_lines(inputs.split("\n"))
 print(sum_sizes(root))
 
 total = 70000000
