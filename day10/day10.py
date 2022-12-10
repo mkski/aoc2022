@@ -12,11 +12,11 @@ def get_adds(p):
     return initial
 
 
-states = get_adds(program)
+adds = get_adds(program)
 total = 0
 output = ""
-for cycle, _ in enumerate(states, 1):
-    x_register = sum(states[:cycle])
+for cycle, _ in enumerate(adds[:-1], 1):
+    x_register = sum(adds[:cycle])
     position = cycle % 40
 
     if position == 20:
