@@ -26,10 +26,12 @@ class Screen:
         self.display = ["." * self.width] * self.height
 
     def swap(self):
+        os.system("clear")
         self.display = self.buffer.split("\n")
         self.buffer = ""
+        print("\n".join("".join(r) for r in self.display))
 
-    def draw(self, cycle, position):
+    def draw_frame(self, cycle, position):
         draw_pos = cycle % 40
         if draw_pos - 1 - position in (1, 0, -1):
             self.buffer += "#"
@@ -41,11 +43,6 @@ class Screen:
 
         if cycle % (self.width * self.height) == 0:
             self.swap()
-        print(self.buffer)
-        os.system("clear")
-
-    def render(self):
-        print("\n".join("".join(r) for r in self.display))
 
 
 class Cpu:
@@ -86,14 +83,13 @@ class Cpu:
         return total
 
     def draw(self):
-        self.screen.draw(self.cycle, self.registers["X"])
+        self.screen.draw_frame(self.cycle, self.registers["X"])
 
     def run(self):
         total = 0
         self.draw()
         for instruction in self.instructions:
             total += self.run_instruction(instruction)
-        self.screen.render()
         return total
 
 
