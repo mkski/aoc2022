@@ -1,3 +1,5 @@
+import os
+
 program = open("input").read().split("\n")
 
 
@@ -23,6 +25,10 @@ class Screen:
         self.buffer = ""
         self.display = ["." * self.width] * self.height
 
+    def swap(self):
+        self.display = self.buffer.split("\n")
+        self.buffer = ""
+
     def draw(self, cycle, position):
         draw_pos = cycle % 40
         if draw_pos - 1 - position in (1, 0, -1):
@@ -34,8 +40,9 @@ class Screen:
             self.buffer += "\n"
 
         if cycle % (self.width * self.height) == 0:
-            self.display = self.buffer.split("\n")
-            self.buffer = ""
+            self.swap()
+        print(self.buffer)
+        os.system("clear")
 
     def render(self):
         print("\n".join("".join(r) for r in self.display))
