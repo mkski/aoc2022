@@ -1,7 +1,8 @@
 import operator
 import re
+from functools import reduce
 
-inputs = open("in-test").read().split("\n\n")
+inputs = open("in").read().split("\n\n")
 
 items_re = re.compile(r"Starting items: (?P<g>[^\n]+)")
 ops_re = re.compile(r"Operation: (?P<g>[^\n]+)")
@@ -56,6 +57,8 @@ class Monkey:
         self.inspected += 1
         if reduce_worry:
             item = item // 3
+        else:
+            item = item % reduce(operator.mul, [m.test_value for m in monkeys])
 
         if self.test_item(item):
             self.throw_to(item, monkeys[self.true_monkey])
@@ -65,7 +68,6 @@ class Monkey:
         return item
 
     def throw_to(self, item, monkey):
-        # print(f"throwing {item} to {monkey}")
         monkey.items.append(item)
 
     def do_round(self, monkeys):
@@ -98,8 +100,5 @@ do_rounds(20)
 print(operator.mul(*sorted([m.inspected for m in monkeys])[-2:]))
 
 monkeys = make_monkeys(inputs)
-do_rounds(20, reduce_worry=False)
+do_rounds(10_000, reduce_worry=False)
 print(operator.mul(*sorted([m.inspected for m in monkeys])[-2:]))
-
-for n, m in enumerate(monkeys):
-    print(n, m.inspected)
