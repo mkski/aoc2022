@@ -20,7 +20,7 @@ direct = {
 
 
 def translate(p, x, y):
-        return Point(p.x + x, p.y + y)
+    return Point(p.x + x, p.y + y)
 
 
 def move(p, direction):
