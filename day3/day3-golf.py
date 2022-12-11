@@ -1,5 +1,6 @@
 import string as i
-q=open("input").read().split("\n")
+
+q=open("in").read().split("\n")
 p={k:v for k,v in zip(i.ascii_lowercase+i.ascii_uppercase,range(1,53))}
 s=t=0;z=set;x=list
 for r in q:

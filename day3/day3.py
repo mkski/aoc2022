@@ -1,6 +1,6 @@
 import string
 
-with open("input") as f:
+with open("in") as f:
     inputs = f.read()
 
 rucks = inputs.split("\n")

@@ -1,6 +1,6 @@
 import re
 
-inputs = open("input").read()
+inputs = open("in").read()
 sections = inputs.split("\n\n")
 crates, moves = sections
 

@@ -1,4 +1,4 @@
-inputs = open("input").read().split("\n")
+inputs = open("in").read().split("\n")
 
 c = 0
 s = 0

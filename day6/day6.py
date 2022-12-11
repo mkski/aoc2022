@@ -1,4 +1,4 @@
-signal = open("input").read()
+signal = open("in").read()
 
 def find_unique_window(signal, size):
     for n, _ in enumerate(signal[:-size]):

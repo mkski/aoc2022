@@ -1,4 +1,4 @@
-with open("input") as f:
+with open("in") as f:
     guide = f.read()
 
 rounds = guide.split("\n")
@@ -82,4 +82,3 @@ for r in rounds:
     score += my_move.score + (my_move > opp_move)
 
 print(score)
-    

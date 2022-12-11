@@ -1,4 +1,4 @@
-with open("input") as f:
+with open("in") as f:
     inputs = f.read()
 
 elf_calories = inputs.split("\n\n")

@@ -1,7 +1,7 @@
 from collections import namedtuple
 from math import sqrt
 
-inputs = open("input").read().split("\n")
+inputs = open("in").read().split("\n")
 Point = namedtuple("point", ("x", "y"))
 
 d = {

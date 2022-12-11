@@ -1,4 +1,4 @@
-inputs = open("input").read().strip()
+inputs = open("in").read().strip()
 trees = [[int(c) for c in r] for r in inputs.split("\n")]
 
 rows = len(trees)

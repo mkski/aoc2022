@@ -1,4 +1,4 @@
-program = open("input").read().split()
+program = open("in").read().split()
 
 adds = [1] + [0 if t in ("addx", "noop") else int(t) for t in program]
 total = 0

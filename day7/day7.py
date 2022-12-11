@@ -1,4 +1,4 @@
-inputs = open("input").read()
+inputs = open("in").read()
 
 
 PROMPT = "$ "

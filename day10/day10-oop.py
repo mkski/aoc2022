@@ -1,6 +1,6 @@
 import os
 
-program = open("input").read().split("\n")
+program = open("in").read().split("\n")
 
 
 class Instruction:

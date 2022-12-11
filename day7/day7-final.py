@@ -1,4 +1,4 @@
-inputs = open("input").read().split("\n")
+inputs = open("in").read().split("\n")
 
 def parse_cmd_lines(lines):
     dir_sizes = {"/": 0}
