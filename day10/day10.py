@@ -2,17 +2,12 @@ program = open("input").read().split()
 
 
 def get_adds(p):
-    initial = [1]
-    for cycle in p:
-        match cycle:
-            case "noop" | "addx":
-                initial.append(0)
-            case value:
-                initial.append(int(value))
-    return initial
+    yield 1
+    for token in p:
+        yield 0 if token in ("addx", "noop") else int(token)
 
 
-adds = get_adds(program)
+adds = list(get_adds(program))
 total = 0
 output = ""
 for cycle, _ in enumerate(adds[:-1], 1):
