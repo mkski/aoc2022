@@ -1,5 +1,5 @@
 from operator import ge, le
-from copy import deepcopy
+from time import time
 
 inputs = open("in").read().split("\n")
 
@@ -39,13 +39,15 @@ class Node:
         return (self.row, self.col) == (other.row, other.col)
 
 
-node_map = [
-    [Node(r, c, col) for c, col in enumerate(row)]
-    for r, row in enumerate(inputs)
-]
+def make_node_map(inputs):
+    return [
+        [Node(r, c, col) for c, col in enumerate(row)]
+        for r, row in enumerate(inputs)
+    ]
 
-N_ROWS = len(node_map)
-N_COLS = len(node_map[0])
+
+N_ROWS = len(inputs)
+N_COLS = len(inputs[0])
 
 
 def add_neighbors(node, node_map, reverse=False):
@@ -117,8 +119,35 @@ def shortest_path(nodes, start, end=None):
         return min(d for n, d in distances.items() if n.value == "a")
 
 
-nodes, start, end = build_graph(deepcopy(node_map))
-print(shortest_path(nodes, start, end))
+def shortest_path_bfs(start, end=None):
+    queue = [(start, [])]
+    visited = set([start])
+    while queue:
+        node, path = queue.pop(0)
 
-nodes, start, end = build_graph(deepcopy(node_map), reverse=True)
-print(shortest_path(nodes, end))
+        if end is not None and node == end:
+            return len(path)
+        elif end is None and node.value == 'a':
+            return len(path)
+
+        for neighbor in node.neighbors:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, path + [neighbor]))
+
+
+print("Part 1")
+node_map = make_node_map(inputs)
+nodes, start, end = build_graph(node_map)
+s = time()
+print(f"  BFS: {shortest_path_bfs(start, end)} ({time() - s:.04f}s)")
+s = time()
+print(f"  Djikstra: {shortest_path(nodes, start, end)} ({time() - s:02f}s)")
+
+print("Part 2")
+node_map = make_node_map(inputs)
+nodes, start, end = build_graph(node_map, reverse=True)
+s = time()
+print(f"  BFS: {shortest_path_bfs(end)} ({time() - s:2f}s)")
+s = time()
+print(f"  Djikstra: {shortest_path(nodes, end)} ({time() - s:02f}s)")
