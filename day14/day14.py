@@ -63,9 +63,7 @@ def fill(rocks, floor):
     filled = set()
     while sand := move_sand(Point(500, 0), rocks, filled, floor):
         filled.add(sand)
-        print(sand)
         if sand == Point(500, 0):
-            print(sand)
             break
     return len(filled)
 
