@@ -1,5 +1,6 @@
 from operator import ge, le
 from time import time
+from collections import deque
 
 inputs = open("in").read().split("\n")
 
@@ -120,10 +121,10 @@ def shortest_path(nodes, start, end=None):
 
 
 def shortest_path_bfs(start, end=None):
-    queue = [(start, [])]
+    queue = deque([(start, [])])
     visited = set([start])
     while queue:
-        node, path = queue.pop(0)
+        node, path = queue.popleft()
 
         if end is not None and node == end:
             return len(path)
