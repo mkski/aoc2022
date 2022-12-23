@@ -10,7 +10,7 @@ def touching(c1, c2):
     )
 
 
-def surface_area(inputs, air=[]):
+def surface_area(inputs):
     area = 0
     xmin, xmax = ymin, ymax = zmin, zmax = 999, 0
     for c1 in inputs:
@@ -25,26 +25,42 @@ def surface_area(inputs, air=[]):
     return area, xmin, xmax, ymin, ymax, zmin, zmax
 
 
-def get_air_bubbles(inputs, xmin, xmax, ymin, ymax, zmin, zmax):
-    bubbles = []
-    for x in range(xmin, xmax+1):
-        for y in range(ymin, ymax+1):
-            for z in range(zmin, zmax+1):
-                n_touching = 0
-                if (x, y, z) in inputs:
-                    continue
+def external_area(inputs, xmin, xmax, ymin, ymax, zmin, zmax):
+    to_check = [(xmin-1, ymin-1, zmin-1)]
+    checked = set()
+    area = 0
+    while to_check:
+        pos = to_check.pop(0)
+        checked.add(pos)
+        x, y, z = pos
+       
+        neighbors = [
+            (x+1, y, z),
+            (x-1, y, z),
+            (x, y+1, z),
+            (x, y-1, z),
+            (x, y, z+1),
+            (x, y, z-1)
+        ]
 
-                for c in inputs:
-                    if touching(c, (x, y, z)):
-                        n_touching += 1
-
-                if n_touching == 6:
-                    bubbles.append((x, y, z))
-    return bubbles
+        for neighbor in neighbors:
+            if (
+                xmin-1 <= neighbor[0] <= xmax+1 and
+                ymin-1 <= neighbor[1] <= ymax+1 and
+                zmin-1 <= neighbor[2] <= zmax+1 and
+                neighbor not in checked and
+                neighbor not in to_check
+            ):
+                if neighbor in inputs:
+                    area += 1
+                else:
+                    to_check.append(neighbor)
+    return area
 
 
 area, *minmax = surface_area(inputs)
 print(area)
-air_bubbles = get_air_bubbles(inputs, *minmax)
-air_area, *_ = surface_area(air_bubbles)
-print(area - air_area - len(air_bubbles))
+# print(*minmax)
+air_bubbles = external_area(inputs, *minmax)
+# air_area, *_ = surface_area(air_bubbles)
+print(air_bubbles)
