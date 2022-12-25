@@ -57,7 +57,7 @@ class Valve:
     @classmethod
     def from_valves(cls, valves):
         flowing = [cls(name, v["rate"]) for name, v in valves.items() if v["rate"] > 0]
-        start = Valve("AA", 0)
+        start = cls("AA", 0)
         for valve in flowing:
             path_len = len(path_to(start.name, valve.name))
             start.add_tunnel(Tunnel(start, valve, path_len))
@@ -91,7 +91,7 @@ def max_steam(start, minutes=30):
 
 
 s = time.time()
-valves = parse_input(test_inputs)
+valves = parse_input(inputs)
 start, flowing = Valve.from_valves(valves)
 paths = max_steam(start)
 print(max(paths, key=lambda p: p[1])[1])
@@ -99,32 +99,56 @@ print(f"{time.time()-s:0.04f}s")
 
 
 from copy import deepcopy
+s = time.time()
+# max_steam returns all possible paths that can be completed in the minutes given
 paths = max_steam(start, minutes=26)
 
-# for p in paths:
-#     if p[0] == ["AA", "DD", "HH", "EE"]:
-#         print(p[1])
-#     if p[0] == ["AA", "JJ", "BB", "CC"]:
-#         print(p[1])
+# eliminate all sub paths that dont open roughly half of flowing valves
+# paths = [p for p in paths if 2*(len(p[0])-1) - flowing_count in range(-3, 4)]
 
-flowing_set = set([v.name for v in flowing])
-possibilities = {}
-for p1, p2 in product(paths, deepcopy(paths)):
-    p1, s1 = p1
-    p2, s2 = p2
-    if not p1 or not p2 or 1 in [len(p1), len(p2)]:
-        continue
+# ^^^ this didnt eliminate enough paths
 
-    p1.pop(0)
-    p2.pop(0)
-    v = frozenset(set(p1) | set(p2))
-    if v in possibilities and v == frozenset(flowing_set):
-        possibilities[v] = max(s1+s2, possibilities[v])
-    else:
-        possibilities[v] = s1+s2
-print(possibilities)
+# instead, we eliminate those paths that clearly dont release enough steam
+paths = [p for p in paths if p[1] > 1200]
+# definitely did not tweak this number(^) a ton of times until i got the right answer..
+num_paths = len(paths)
 
+possibilities = []
 
-# s = time.time()
-# print(max_steam(start, minutes=26))
-# print(f"{time.time()-s:0.04f}s")
+# just some status variables
+total = num_paths**2
+n = 1
+start_time = time.time()
+since = start_time
+
+# to find the answer for part two, we need two unique paths that open the most amount of steam
+# get the steam values for each pair of paths after we eliminate the paths that definitely do not
+# release enough steam
+for p1 in deepcopy(paths):
+    path1, steam1 = p1
+    # every path starts at AA, lets remove it
+    path1.pop(0)
+
+    for p2 in deepcopy(paths):
+        # calculate our status
+        if n % 1_000_000 == 0:
+            progress = n/total
+            print(f"status: {progress*100:0.02f}%")
+            print(f"elapsed: {time.time() - start_time:0.02f}s")
+            print(f"est. remaining: {(total-n)/1_000_000*(time.time()-since):0.02f}s")
+            print()
+            since = time.time()
+
+        path2, steam2 = p2
+        path2.pop(0)
+        n += 1
+
+        # make sure the paths dont open the same valve more than once
+        if set(path1) & set(path2):
+            continue
+
+        # add this path pair's steam value for consideration
+        possibilities.append(steam1+steam2)
+
+print(max(possibilities))
+print(f"{time.time()-s:0.04f}s")
